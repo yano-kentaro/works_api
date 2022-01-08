@@ -16,8 +16,20 @@ function onOpen() {
 }
 
 
+//=================================================================|1
+//							APIの初期設定
+//========================================================|2022.01.04
+// v1: 関数の作成
+function showApiConf() {
+  const html = HtmlService.createHtmlOutputFromFile('form')
+                .setSandboxMode(HtmlService.SandboxMode.IFRAME)
+                .setWidth(800)
+                .setHeight(500);
+
+  SpreadsheetApp.getUi().showModalDialog(html, 'API設定');
     }
-  ];
+
+
 
   SpreadsheetApp.getActiveSpreadsheet().addMenu("サスケWorks",menu); 
 }
