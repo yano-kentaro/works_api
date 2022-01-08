@@ -27,11 +27,45 @@ function showApiConf() {
                 .setHeight(500);
 
   SpreadsheetApp.getUi().showModalDialog(html, 'API設定');
-    }
+}
 
 
+//=================================================================|1
+//							HTML側でプロパティを取得する
+//========================================================|2022.01.05
+// v1: 関数の作成
+function getPropsOnClient() {
+  const properties = PropertiesService.getScriptProperties().getProperties();
 
-  SpreadsheetApp.getActiveSpreadsheet().addMenu("サスケWorks",menu); 
+  const propData = [];
+  for (let key in properties) {
+    let temProp = {};
+    temProp.key = key;
+    temProp.value = properties[key];
+    propData.push(temProp);
+  }
+
+  return JSON.stringify(propData);
+}
+
+
+//=================================================================|1
+//							HTML側でプロパティを登録・修正する
+//========================================================|2022.01.08
+// v1: 関数の作成
+function setPropAndRemount(key, value) {
+  PropertiesService.getScriptProperties().setProperty(key, value);
+  return getPropsOnClient();
+}
+
+
+//=================================================================|1
+//							HTML側でプロパティを削除する
+//========================================================|2022.01.08
+// v1: 関数の作成
+function deletePropAndRemount(prop) {
+  PropertiesService.getScriptProperties().deleteProperty(prop.key);
+  return getPropsOnClient();
 }
 
 
