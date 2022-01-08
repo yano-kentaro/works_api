@@ -1,16 +1,21 @@
-//=================================================================|1
+//=================================================================|2
 //							スプレッドシートを開いた際に実行
-//========================================================|2022.01.02
+//========================================================|2022.01.03
 // v1: 関数の作成
+// v2: 初期設定登録フォームの実装
 function onOpen() {
-  const menu = [
-    {
-      name: 'CSV出力',
-      functionName: 'csvSaveToDrive'
-    },
-    {
-      name: '一括登録',
-      functionName: 'apiImportPost'
+  const ui = SpreadsheetApp.getUi();
+  const menu = ui.createMenu('サスケWorks');
+  menu.addSubMenu(ui.createMenu('関数')
+    .addItem('CSV出力', 'csvSaveToDrive')
+    .addItem('一括登録', 'apiImportPost')
+  );
+  menu.addSeparator();
+  menu.addItem('API設定', 'showApiConf');
+  menu.addToUi();
+}
+
+
     }
   ];
 
