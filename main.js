@@ -48,7 +48,7 @@ function apiImportPost() {
   //----------------------------------------
   // プロパティの取得
   let propKeys = ['xApiKey', 'xToken', 'appKey', 'saveCode'];
-  const properties = getProperties(propKeys);
+  const properties = getProps(propKeys, true);
   if(!properties) { return }
 
   //----------------------------------------
@@ -98,7 +98,7 @@ function csvSaveToDrive() {
   //----------------------------------------
   // プロパティの取得
   let propKeys = ['folderId'];
-  const properties = getProperties(propKeys);
+  const properties = getProps(propKeys, true);
   if(!properties) { return }
 
   //----------------------------------------
@@ -136,45 +136,46 @@ function confirmExecFunction() {
 }
 
 
-//=================================================================|2
+//=================================================================|3
 //							スクリプトプロパティの取得
-//========================================================|2021.12.31
+//========================================================|2022.01.05
 // v1: 関数の作成
 // v2: keysを配列で受け取り、それに対応するプロパティを取得する仕様に変更
-function getProperties(keys) {
+// v3: 第二引数がtrueの場合のみ、値が見つからなければ警告を発生する仕様に変更
+function getProps(keys, bool) {
   const env = PropertiesService.getScriptProperties();
   const properties = {};
   if (keys.includes('xApiKey')) {
     properties.xApiKey = env.getProperty('API_KEY');
-    if(!properties.xApiKey) {
+    if(!properties.xApiKey && bool) {
       Browser.msgBox('APIキーが見つかりませんでした。プロパティストアにAPI_KEYを登録しているか確認して下さい。');
       return
     }
   }
   if (keys.includes('xToken')) {
     properties.xToken = env.getProperty('API_TOKEN');
-    if(!properties.xToken) {
+    if(!properties.xToken && bool) {
       Browser.msgBox('APIトークンが見つかりませんでした。プロパティストアにAPI_TOKENを登録しているか確認して下さい。');
       return
     }
   }
   if (keys.includes('appKey')) {
     properties.appKey = env.getProperty('APP_KEY');
-    if(!properties.appKey) {
+    if(!properties.appKey && bool) {
       Browser.msgBox('アプリキーが見つかりませんでした。プロパティストアにAPP_KEYを登録しているか確認して下さい。');
       return
     }
   }
   if (keys.includes('saveCode')) {
     properties.saveCode = env.getProperty('SAVE_CODE');
-    if(!properties.saveCode) {
+    if(!properties.saveCode && bool) {
       Browser.msgBox('識別キーが見つかりませんでした。プロパティストアにSAVE_CODEを登録しているか確認して下さい。');
       return
     }
   }
   if (keys.includes('folderId')) {
     properties.folderId = env.getProperty('FOLDER_ID');
-    if(!properties.folderId) {
+    if(!properties.folderId && bool) {
       Browser.msgBox('フォルダIDの取得に失敗しました。プロパティストアにFOLDER_IDを登録しているか確認して下さい。');
       return
     }
