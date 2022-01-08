@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<base target="_top">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+	<title>Document</title>
+</head>
+<body>
+	<div id="app" v-cloak>
+		<v-app>
+			<!-- プロパティテーブル -->
+			<v-data-table
+				:headers="headers"
+				:items="propData"
+			>
+				<!-- 編集ボタン -->
+				<template v-slot:item.edit="{ item }">
+					<v-btn
+						dark
+						color="light-green"
+						@click="editPropDialogOpen(item)"
+					>編集</v-btn>
+				</template>
+				<!-- 編集ボタン -->
+
+				<!-- 削除ボタン -->
+				<template v-slot:item.delete="{ item }">
+					<v-btn
+						color="error"
+						@click="confirmDeleteProp(item)"
+					>削除</v-btn>
+				</template>
+				<!-- 削除ボタン -->
+
+			</v-data-table>
+			<!-- プロパティテーブル -->
+			
+			<!-- 新規登録ボタン -->
+			<v-fab-transition>
+				<v-btn
+					color="primary"
+					dark
+					absolute
+					bottom
+					right
+					fab
+					style="margin-bottom: 5%;"
+					@click="registerPropDialogOpen()"
+				>
+					<v-icon>mdi-plus</v-icon>
+				</v-btn>
+			</v-fab-transition>
+			<!-- 新規登録ボタン -->
+			
+			<!-- 新規登録ダイアログ -->
+			<v-dialog
+				v-model="registerPropDialog"
+				persistent
+			>
+				<v-card>
+					<v-card-title>
+						<span class="text-h5">API設定 新規登録</span>
+					</v-card-title>
+					<v-card-text>
+						<v-container>
+							<v-text-field
+								label="KEY"
+								name="key"
+								v-model="key"
+								required
+							></v-text-field>
+							<v-text-field
+								label="VALUE"
+								name="value"
+								v-model="value"
+								@click:append="valueTextField = !valueTextField"
+								:append-icon="valueTextField ? 'mdi-eye' : 'mdi-eye-off'"
+								:type="valueTextField ? 'text' : 'password'"
+								required
+							></v-text-field>
+						</v-container>
+					</v-card-text>
+					<v-card-actions>
+						<v-spacer></v-spacer>
+						<v-btn
+							dark
+							color="warning"
+							large
+							@click="registerPropDialog = !registerPropDialog"
+						>
+							キャンセル
+						</v-btn>
+						<v-spacer></v-spacer>
+						<v-btn
+							dark
+							color="primary"
+							large
+							@click="confirmRegisterProp"
+						>
+							　登録　
+						</v-btn>
+						<v-spacer></v-spacer>
+					</v-card-actions>
+				</v-card>
+			</v-dialog>
+			<!-- 新規登録ダイアログ -->
+
+			<!-- 編集ダイアログ -->
+			<v-dialog
+				v-model="editPropDialog"
+				persistent
+			>
+				<v-card>
+					<v-card-title>
+						<span class="text-h5">{{ key }}</span>
+					</v-card-title>
+					<v-card-text>
+						<v-container>
+							<v-text-field
+								label="VALUE"
+								name="value"
+								v-model="value"
+								@click:append="valueTextField = !valueTextField"
+								:append-icon="valueTextField ? 'mdi-eye' : 'mdi-eye-off'"
+								:type="valueTextField ? 'text' : 'password'"
+								required
+							></v-text-field>
+						</v-container>
+					</v-card-text>
+					<v-card-actions>
+						<v-spacer></v-spacer>
+						<v-btn
+							dark
+							color="warning"
+							large
+							@click="editPropDialog = !editPropDialog"
+						>
+							キャンセル
+						</v-btn>
+						<v-spacer></v-spacer>
+						<v-btn
+							dark
+							color="primary"
+							large
+							@click="confirmEditProp"
+						>
+							　登録　
+						</v-btn>
+						<v-spacer></v-spacer>
+					</v-card-actions>
+				</v-card>
+			</v-dialog>
+			<!-- 編集ダイアログ -->
+
+			<!-- 確認ダイアログ -->
+			<v-dialog
+				v-model="confirmDialog"
+				persistent
+			>
+				<v-card>
+					<v-card-title>
+						<span class="text-h5">{{ confirmTitle }}</span>
+					</v-card-title>
+					<v-card-text>
+						<span class="text-h6">{{ confirmValue }}</span>
+						<p>{{ confirmText }}</p>
+					</v-card-text>
+					<v-card-actions>
+						<v-spacer></v-spacer>
+						<v-btn
+							dark
+							color="warning"
+							large
+							@click="confirmDialog = !confirmDialog"
+						>
+							キャンセル
+						</v-btn>
+						<v-spacer></v-spacer>
+						<v-btn
+							dark
+							color="primary"
+							large
+							@click="confirmOk"
+						>
+							　OK　
+						</v-btn>
+						<v-spacer></v-spacer>
+					</v-card-actions>
+				</v-card>
+			</v-dialog>
+			<!-- 確認ダイアログ -->
+		</v-app>
+	</div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+<script>
+	let vm = '';
+
+	vm = new Vue({
+		el: '#app',
+		vuetify: new Vuetify(),
+		data: () => ({
+			headers: [
+				{ text: 'KEY', value: 'key' },
+				{ text: 'VALUE', value: 'value' },
+				{ text: '編集', value: 'edit', align: 'center' },
+				{ text: '削除', value: 'delete', align: 'center' }
+			],
+			propData: [],
+			registerPropDialog: false,
+			editPropDialog: false,
+			deletePropDialog: false,
+			confirmDialog: false,
+			valueTextField: false,
+			key: '',
+			value: '',
+			selectedProp: {},
+			confirmTitle: '',
+			confirmValue: '',
+			confirmText: '',
+		}),
+		mounted: function() {
+			google.script.run.withSuccessHandler(this.renderProps).getPropsOnClient();
+		},
+		methods: {
+			// プロパティの描画
+			renderProps(data) {
+				const json = JSON.parse(data);
+				this.propData = json;
+			},
+			// プロパティの登録
+			registerPropDialogOpen() {
+				this.key = '';
+				this.value = '';
+				this.registerPropDialog = !this.registerPropDialog;
+			},
+			confirmRegisterProp() {
+				this.confirmTitle = `${this.key}の登録`;
+				this.confirmValue = this.value;
+				this.confirmText = '上記内容で登録しますか？';
+				this.confirmDialog = !this.confirmDialog;
+			},
+			registerProp() {
+				if(this.key && this.value) {
+					google.script.run.withSuccessHandler(this.renderProps).setPropAndRemount(this.key, this.value);
+					this.registerPropDialog = !this.registerPropDialog;
+				}
+			},
+			// プロパティの編集
+			editPropDialogOpen(prop) {
+				this.selectedProp = prop;
+				this.key = prop.key;
+				this.value = prop.value;
+				this.editPropDialog = !this.editPropDialog;
+			},
+			confirmEditProp() {
+				this.confirmTitle = `${this.key}の編集`;
+				this.confirmValue = this.value;
+				this.confirmText = '上記内容に修正しますか？';
+				this.confirmDialog = !this.confirmDialog;
+			},
+			editProp(prop) {
+				if(this.value) {
+					google.script.run.withSuccessHandler(this.renderProps).setPropAndRemount(prop.key, this.value);
+					this.editPropDialog = !this.editPropDialog;
+				}
+			},
+			// プロパティの削除
+			confirmDeleteProp(prop) {
+				this.selectedProp = prop;
+				this.key = prop.key;
+				this.value = prop.value;
+				this.confirmTitle = `${this.key}の削除`;
+				this.confirmValue = this.value;
+				this.confirmText = '上記内容を削除しますか？';
+				this.confirmDialog = !this.confirmDialog;
+			},
+			deleteProp(prop) {
+				if(this.selectedProp) {
+					google.script.run.withSuccessHandler(this.renderProps).deletePropAndRemount(prop);
+				}
+			},
+			// 確認ダイアログの表示
+			confirmOk() {
+				if(this.registerPropDialog) {
+					this.confirmDialog = !this.confirmDialog;
+					this.registerProp();
+				} else if(this.editPropDialog) {
+					this.confirmDialog = !this.confirmDialog;
+					this.editProp(this.selectedProp);
+				} else {
+					this.confirmDialog = !this.confirmDialog;
+					this.deleteProp(this.selectedProp);
+				}
+			},
+		}
+	})
+</script>
+
+<style>
+	.input-text {
+		width: 100%;
+	}
+</style>
+</html>
