@@ -12,6 +12,10 @@ function getPropsOnClient() {
     temProp.value = properties[key];
     propData.push(temProp);
   }
+  propData.sort(function(top, bottom) {
+    if (top.key > bottom.key) { return 1; }
+    else { return -1; }
+  });
 
   return JSON.stringify(propData);
 }
