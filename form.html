@@ -71,7 +71,6 @@
 							<v-text-field
 								label="KEY"
 								v-model="inputKey"
-								required
 							></v-text-field>
 							<v-text-field
 								label="VALUE"
@@ -79,7 +78,6 @@
 								@click:append="passwordVisibleFlag = !passwordVisibleFlag"
 								:append-icon="passwordVisibleFlag ? 'mdi-eye' : 'mdi-eye-off'"
 								:type="passwordVisibleFlag ? 'text' : 'password'"
-								required
 							></v-text-field>
 						</v-container>
 					</v-card-text>
@@ -98,6 +96,7 @@
 							dark
 							color="primary"
 							large
+							:disabled="disableRegisterFlag"
 							@click="confirmRegisterProp"
 						>
 							　登録　
@@ -125,7 +124,6 @@
 								@click:append="passwordVisibleFlag = !passwordVisibleFlag"
 								:append-icon="passwordVisibleFlag ? 'mdi-eye' : 'mdi-eye-off'"
 								:type="passwordVisibleFlag ? 'text' : 'password'"
-								required
 							></v-text-field>
 						</v-container>
 					</v-card-text>
@@ -144,6 +142,7 @@
 							dark
 							color="primary"
 							large
+							:disabled="disableEditFlag"
 							@click="confirmEditProp"
 						>
 							　登録　
@@ -191,6 +190,7 @@
 				</v-card>
 			</v-dialog>
 			<!-- 確認ダイアログ -->
+
 		</v-app>
 	</div>
 </body>
@@ -300,7 +300,23 @@
 					this.execDeleteProp(this.selectedProp);
 				}
 			},
-		}
+		},
+		computed: {
+			disableRegisterFlag: function() {
+				if(this.inputKey && this.inputValue) {
+					return false;
+				} else {
+					return true;
+				}
+			},
+			disableEditFlag: function() {
+				if(this.inputValue) {
+					return false;
+				} else {
+					return true;
+				}
+			}
+		},
 	})
 </script>
 
