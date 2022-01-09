@@ -2,6 +2,10 @@
 //							HTML側でプロパティを取得する
 //========================================================|2022.01.05
 // v1: 関数の作成
+/**
+ * 登録されているスクリプトプロパティを返す。
+ * @returns 
+ */
 function getPropsOnClient() {
   const properties = PropertiesService.getScriptProperties().getProperties();
 
@@ -25,6 +29,12 @@ function getPropsOnClient() {
 //							HTML側でプロパティを登録・修正する
 //========================================================|2022.01.08
 // v1: 関数の作成
+/**
+ * クライアント側から指定したスクリプトプロパティを登録・修正する。
+ * @param {string} key 
+ * @param {string} value 
+ * @returns 
+ */
 function setPropAndRemount(key, value) {
   PropertiesService.getScriptProperties().setProperty(key, value);
   return getPropsOnClient();
@@ -35,17 +45,13 @@ function setPropAndRemount(key, value) {
 //							HTML側でプロパティを削除する
 //========================================================|2022.01.08
 // v1: 関数の作成
+/**
+ * クライアント側から指定したスクリプトプロパティを削除する。
+ * @param {object} prop 
+ * @returns 
+ */
 function deletePropAndRemount(prop) {
   PropertiesService.getScriptProperties().deleteProperty(prop.key);
   return getPropsOnClient();
 }
 
-
-//=================================================================|1
-//							作業中スプレッドシートの最初のシートを取得
-//========================================================|2021.12.31
-// v1: 関数の作成
-function setActiveSheet() {
-  let activeSheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
-  return activeSheet;
-}

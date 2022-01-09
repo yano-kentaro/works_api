@@ -2,6 +2,10 @@
 //							関数の実行確認
 //========================================================|2021.12.31
 // v1: 関数の作成
+/**
+ * 関数実行前の確認を行う
+ * @return {boolean}
+ */
 function confirmExecFunction() {
   let msg = Browser.msgBox('実行確認','関数を実行します。よろしいですか？',Browser.Buttons.OK_CANCEL);
   if (msg == 'ok') {
@@ -18,6 +22,13 @@ function confirmExecFunction() {
 // v1: 関数の作成
 // v2: keysを配列で受け取り、それに対応するプロパティを取得する仕様に変更
 // v3: 第二引数がtrueの場合のみ、値が見つからなければ警告を発生する仕様に変更
+/**
+ * 指定したスクリプトプロパティを返す。
+ * 第二引数で値が見つからない場合の挙動を指定する。
+ * @param {Array} keys 
+ * @param {boolean} bool 
+ * @returns 
+ */
 function getProps(keys, bool) {
   const env = PropertiesService.getScriptProperties();
   const properties = {};
@@ -61,11 +72,30 @@ function getProps(keys, bool) {
 
 
 //=================================================================|1
+//							作業中スプレッドシートの最初のシートを取得
+//========================================================|2021.12.31
+// v1: 関数の作成
+/**
+ * スプレッドシートの最初のシートを取得して返す。
+ * @returns 
+ */
+ function setFirstSheet() {
+  let firstSheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+  return firstSheet;
+}
+
+
+//=================================================================|1
 //							レコードデータのCSVバイナリの作成
 //========================================================|2021.12.31
 // v1: 関数の作成
-function convertBlob(activeSheet) {
-  let records = activeSheet.getDataRange().getValues();
+/**
+ * シートのCSVバイナリを作成して返す
+ * @param {*} sheet 
+ * @returns 
+ */
+function convertBlob(sheet) {
+  let records = sheet.getDataRange().getValues();
   let csv = records.join('\n');
   let blob = Utilities.newBlob(csv, MimeType.CSV, 'records.csv');
   return blob;
@@ -76,6 +106,10 @@ function convertBlob(activeSheet) {
 //							関数実行ログの出力
 //========================================================|2021.12.31
 // v1: 関数の作成
+/**
+ * 関数実行した日時・関数名・実行者のログをlogシートに出力する
+ * @param {string} funcName 
+ */
 function logOutput(funcName) {
   //----------------------------------------
   // ログシートの取得
@@ -111,6 +145,10 @@ function logOutput(funcName) {
 //							実行ユーザー名の取得
 //========================================================|2021.12.31
 // v1: 関数の作成
+/**
+ * 実行ユーザーのIDを返す。
+ * @returns 
+ */
 function getUserId() {
   const userId = Session.getActiveUser().getUserLoginId();
   return userId;
