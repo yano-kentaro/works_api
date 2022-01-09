@@ -23,7 +23,7 @@
 					<v-btn
 						dark
 						color="light-green"
-						@click="editPropDialogOpen(item)"
+						@click="editDialogOpen(item)"
 					>編集</v-btn>
 				</template>
 				<!-- 編集ボタン -->
@@ -50,7 +50,7 @@
 					right
 					fab
 					style="margin-bottom: 5%;"
-					@click="registerPropDialogOpen()"
+					@click="registerDialogOpen()"
 				>
 					<v-icon>mdi-plus</v-icon>
 				</v-btn>
@@ -59,7 +59,7 @@
 			
 			<!-- 新規登録ダイアログ -->
 			<v-dialog
-				v-model="registerPropDialog"
+				v-model="registerFlag"
 				persistent
 			>
 				<v-card>
@@ -70,17 +70,15 @@
 						<v-container>
 							<v-text-field
 								label="KEY"
-								name="key"
-								v-model="key"
+								v-model="inputKey"
 								required
 							></v-text-field>
 							<v-text-field
 								label="VALUE"
-								name="value"
-								v-model="value"
-								@click:append="valueTextField = !valueTextField"
-								:append-icon="valueTextField ? 'mdi-eye' : 'mdi-eye-off'"
-								:type="valueTextField ? 'text' : 'password'"
+								v-model="inputValue"
+								@click:append="passwordVisibleFlag = !passwordVisibleFlag"
+								:append-icon="passwordVisibleFlag ? 'mdi-eye' : 'mdi-eye-off'"
+								:type="passwordVisibleFlag ? 'text' : 'password'"
 								required
 							></v-text-field>
 						</v-container>
@@ -91,7 +89,7 @@
 							dark
 							color="warning"
 							large
-							@click="registerPropDialog = !registerPropDialog"
+							@click="registerFlag = !registerFlag"
 						>
 							キャンセル
 						</v-btn>
@@ -112,22 +110,21 @@
 
 			<!-- 編集ダイアログ -->
 			<v-dialog
-				v-model="editPropDialog"
+				v-model="editFlag"
 				persistent
 			>
 				<v-card>
 					<v-card-title>
-						<span class="text-h5">{{ key }}</span>
+						<span class="text-h5">{{ inputKey }}</span>
 					</v-card-title>
 					<v-card-text>
 						<v-container>
 							<v-text-field
 								label="VALUE"
-								name="value"
-								v-model="value"
-								@click:append="valueTextField = !valueTextField"
-								:append-icon="valueTextField ? 'mdi-eye' : 'mdi-eye-off'"
-								:type="valueTextField ? 'text' : 'password'"
+								v-model="inputValue"
+								@click:append="passwordVisibleFlag = !passwordVisibleFlag"
+								:append-icon="passwordVisibleFlag ? 'mdi-eye' : 'mdi-eye-off'"
+								:type="passwordVisibleFlag ? 'text' : 'password'"
 								required
 							></v-text-field>
 						</v-container>
@@ -138,7 +135,7 @@
 							dark
 							color="warning"
 							large
-							@click="editPropDialog = !editPropDialog"
+							@click="editFlag = !editFlag"
 						>
 							キャンセル
 						</v-btn>
@@ -159,7 +156,7 @@
 
 			<!-- 確認ダイアログ -->
 			<v-dialog
-				v-model="confirmDialog"
+				v-model="confirmFlag"
 				persistent
 			>
 				<v-card>
@@ -176,7 +173,7 @@
 							dark
 							color="warning"
 							large
-							@click="confirmDialog = !confirmDialog"
+							@click="confirmFlag = !confirmFlag"
 						>
 							キャンセル
 						</v-btn>
@@ -213,13 +210,12 @@
 				{ text: '削除', value: 'delete', align: 'center' }
 			],
 			propData: [],
-			registerPropDialog: false,
-			editPropDialog: false,
-			deletePropDialog: false,
-			confirmDialog: false,
-			valueTextField: false,
-			key: '',
-			value: '',
+			registerFlag: false,
+			editFlag: false,
+			confirmFlag: false,
+			passwordVisibleFlag: false,
+			inputKey: '',
+			inputValue: '',
 			selectedProp: {},
 			confirmTitle: '',
 			confirmValue: '',
@@ -229,74 +225,79 @@
 			google.script.run.withSuccessHandler(this.renderProps).getPropsOnClient();
 		},
 		methods: {
+			//----------------------------------------
 			// プロパティの描画
 			renderProps(data) {
 				const json = JSON.parse(data);
 				this.propData = json;
 			},
+			//----------------------------------------
 			// プロパティの登録
-			registerPropDialogOpen() {
-				this.key = '';
-				this.value = '';
-				this.registerPropDialog = !this.registerPropDialog;
+			registerDialogOpen() {
+				this.inputKey = '';
+				this.inputValue = '';
+				this.registerFlag = !this.registerFlag;
 			},
 			confirmRegisterProp() {
-				this.confirmTitle = `${this.key}の登録`;
-				this.confirmValue = this.value;
+				this.confirmTitle = `${this.inputKey}の登録`;
+				this.confirmValue = this.inputValue;
 				this.confirmText = '上記内容で登録しますか？';
-				this.confirmDialog = !this.confirmDialog;
+				this.confirmFlag = !this.confirmFlag;
 			},
-			registerProp() {
-				if(this.key && this.value) {
-					google.script.run.withSuccessHandler(this.renderProps).setPropAndRemount(this.key, this.value);
-					this.registerPropDialog = !this.registerPropDialog;
+			execRegisterProp() {
+				if(this.inputKey && this.inputValue) {
+					google.script.run.withSuccessHandler(this.renderProps).setPropAndRemount(this.inputKey, this.inputValue);
+					this.registerFlag = !this.registerFlag;
 				}
 			},
+			//----------------------------------------
 			// プロパティの編集
-			editPropDialogOpen(prop) {
+			editDialogOpen(prop) {
 				this.selectedProp = prop;
-				this.key = prop.key;
-				this.value = prop.value;
-				this.editPropDialog = !this.editPropDialog;
+				this.inputKey = prop.key;
+				this.inputValue = prop.value;
+				this.editFlag = !this.editFlag;
 			},
 			confirmEditProp() {
-				this.confirmTitle = `${this.key}の編集`;
-				this.confirmValue = this.value;
+				this.confirmTitle = `${this.inputKey}の編集`;
+				this.confirmValue = this.inputValue;
 				this.confirmText = '上記内容に修正しますか？';
-				this.confirmDialog = !this.confirmDialog;
+				this.confirmFlag = !this.confirmFlag;
 			},
-			editProp(prop) {
-				if(this.value) {
-					google.script.run.withSuccessHandler(this.renderProps).setPropAndRemount(prop.key, this.value);
-					this.editPropDialog = !this.editPropDialog;
+			execEditProp(prop) {
+				if(this.inputValue) {
+					google.script.run.withSuccessHandler(this.renderProps).setPropAndRemount(prop.key, this.inputValue);
+					this.editFlag = !this.editFlag;
 				}
 			},
+			//----------------------------------------
 			// プロパティの削除
 			confirmDeleteProp(prop) {
 				this.selectedProp = prop;
-				this.key = prop.key;
-				this.value = prop.value;
-				this.confirmTitle = `${this.key}の削除`;
-				this.confirmValue = this.value;
+				this.inputKey = prop.key;
+				this.inputValue = prop.value;
+				this.confirmTitle = `${this.inputKey}の削除`;
+				this.confirmValue = this.inputValue;
 				this.confirmText = '上記内容を削除しますか？';
-				this.confirmDialog = !this.confirmDialog;
+				this.confirmFlag = !this.confirmFlag;
 			},
-			deleteProp(prop) {
+			execDeleteProp(prop) {
 				if(this.selectedProp) {
 					google.script.run.withSuccessHandler(this.renderProps).deletePropAndRemount(prop);
 				}
 			},
+			//----------------------------------------
 			// 確認ダイアログの表示
 			confirmOk() {
-				if(this.registerPropDialog) {
-					this.confirmDialog = !this.confirmDialog;
-					this.registerProp();
-				} else if(this.editPropDialog) {
-					this.confirmDialog = !this.confirmDialog;
-					this.editProp(this.selectedProp);
+				if(this.registerFlag) {
+					this.confirmFlag = !this.confirmFlag;
+					this.execRegisterProp();
+				} else if(this.editFlag) {
+					this.confirmFlag = !this.confirmFlag;
+					this.execEditProp(this.selectedProp);
 				} else {
-					this.confirmDialog = !this.confirmDialog;
-					this.deleteProp(this.selectedProp);
+					this.confirmFlag = !this.confirmFlag;
+					this.execDeleteProp(this.selectedProp);
 				}
 			},
 		}
