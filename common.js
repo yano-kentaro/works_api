@@ -32,10 +32,11 @@ function confirmExecFunction() {
 function getProps(keys, bool) {
   const env = PropertiesService.getScriptProperties();
   const properties = {};
+  const notFoundKey = '';
   if (keys.includes('xApiKey')) {
     properties.xApiKey = env.getProperty('API_KEY');
     if(!properties.xApiKey && bool) {
-      const notFoundKey = 'API_KEY';
+      notFoundKey = 'API_KEY';
       Browser.msgBox(notFoundKey + getPropsMsg1 + notFoundKey + getPropsMsg2);
       return
     }
@@ -43,7 +44,7 @@ function getProps(keys, bool) {
   if (keys.includes('xToken')) {
     properties.xToken = env.getProperty('API_TOKEN');
     if(!properties.xToken && bool) {
-      const notFoundKey = 'API_TOKEN';
+      notFoundKey = 'API_TOKEN';
       Browser.msgBox(notFoundKey + getPropsMsg1 + notFoundKey + getPropsMsg2);
       return
     }
@@ -51,7 +52,7 @@ function getProps(keys, bool) {
   if (keys.includes('appKey')) {
     properties.appKey = env.getProperty('APP_KEY');
     if(!properties.appKey && bool) {
-      const notFoundKey = 'APP_KEY';
+      notFoundKey = 'APP_KEY';
       Browser.msgBox(notFoundKey + getPropsMsg1 + notFoundKey + getPropsMsg2);
       return
     }
@@ -59,7 +60,7 @@ function getProps(keys, bool) {
   if (keys.includes('saveCode')) {
     properties.saveCode = env.getProperty('SAVE_CODE');
     if(!properties.saveCode && bool) {
-      const notFoundKey = 'SAVE_CODE';
+      notFoundKey = 'SAVE_CODE';
       Browser.msgBox(notFoundKey + getPropsMsg1 + notFoundKey + getPropsMsg2);
       return
     }
@@ -67,7 +68,7 @@ function getProps(keys, bool) {
   if (keys.includes('folderId')) {
     properties.folderId = env.getProperty('FOLDER_ID');
     if(!properties.folderId && bool) {
-      const notFoundKey = 'FOLDER_ID';
+      notFoundKey = 'FOLDER_ID';
       Browser.msgBox(notFoundKey + getPropsMsg1 + notFoundKey + getPropsMsg2);
       return
     }
