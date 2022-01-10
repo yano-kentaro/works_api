@@ -7,7 +7,7 @@
  * @return {boolean}
  */
 function confirmExecFunction() {
-  let msg = Browser.msgBox('実行確認','関数を実行します。よろしいですか？',Browser.Buttons.OK_CANCEL);
+  let msg = Browser.msgBox(confirmExecFunctionTitle, confirmExecFunctionMsg, Browser.Buttons.OK_CANCEL);
   if (msg == 'ok') {
     return true;
   } else {
@@ -35,35 +35,40 @@ function getProps(keys, bool) {
   if (keys.includes('xApiKey')) {
     properties.xApiKey = env.getProperty('API_KEY');
     if(!properties.xApiKey && bool) {
-      Browser.msgBox('APIキーが見つかりませんでした。プロパティストアにAPI_KEYを登録しているか確認して下さい。');
+      const notFoundKey = 'API_KEY';
+      Browser.msgBox(notFoundKey + getPropsMsg1 + notFoundKey + getPropsMsg2);
       return
     }
   }
   if (keys.includes('xToken')) {
     properties.xToken = env.getProperty('API_TOKEN');
     if(!properties.xToken && bool) {
-      Browser.msgBox('APIトークンが見つかりませんでした。プロパティストアにAPI_TOKENを登録しているか確認して下さい。');
+      const notFoundKey = 'API_TOKEN';
+      Browser.msgBox(notFoundKey + getPropsMsg1 + notFoundKey + getPropsMsg2);
       return
     }
   }
   if (keys.includes('appKey')) {
     properties.appKey = env.getProperty('APP_KEY');
     if(!properties.appKey && bool) {
-      Browser.msgBox('アプリキーが見つかりませんでした。プロパティストアにAPP_KEYを登録しているか確認して下さい。');
+      const notFoundKey = 'APP_KEY';
+      Browser.msgBox(notFoundKey + getPropsMsg1 + notFoundKey + getPropsMsg2);
       return
     }
   }
   if (keys.includes('saveCode')) {
     properties.saveCode = env.getProperty('SAVE_CODE');
     if(!properties.saveCode && bool) {
-      Browser.msgBox('識別キーが見つかりませんでした。プロパティストアにSAVE_CODEを登録しているか確認して下さい。');
+      const notFoundKey = 'SAVE_CODE';
+      Browser.msgBox(notFoundKey + getPropsMsg1 + notFoundKey + getPropsMsg2);
       return
     }
   }
   if (keys.includes('folderId')) {
     properties.folderId = env.getProperty('FOLDER_ID');
     if(!properties.folderId && bool) {
-      Browser.msgBox('フォルダIDの取得に失敗しました。プロパティストアにFOLDER_IDを登録しているか確認して下さい。');
+      const notFoundKey = 'FOLDER_ID';
+      Browser.msgBox(notFoundKey + getPropsMsg1 + notFoundKey + getPropsMsg2);
       return
     }
   }
