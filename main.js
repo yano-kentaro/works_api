@@ -8,13 +8,13 @@
  */
 function onOpen() {
   const ui = SpreadsheetApp.getUi();
-  const menu = ui.createMenu('サスケWorks');
-  menu.addSubMenu(ui.createMenu('関数')
-    .addItem('CSV出力', 'csvSaveToDrive')
-    .addItem('一括登録', 'apiImportPost')
+  const menu = ui.createMenu(saaskeWorks);
+  menu.addSubMenu(ui.createMenu(functionJp)
+    .addItem(convertToCsv, 'csvSaveToDrive')
+    .addItem(bulkRegistration, 'apiImportPost')
   );
   menu.addSeparator();
-  menu.addItem('API設定', 'showApiConf');
+  menu.addItem(apiSetting, 'showApiConf');
   menu.addToUi();
 }
 
@@ -32,7 +32,7 @@ function showApiConf() {
                 .setWidth(800)
                 .setHeight(500);
 
-  SpreadsheetApp.getUi().showModalDialog(html, 'API設定');
+  SpreadsheetApp.getUi().showModalDialog(html, apiSetting);
 }
 
 
@@ -63,7 +63,7 @@ function apiImportPost() {
 
   //----------------------------------------
   // API通信
-  const endpoint = 'https://api.work-s.app/v1/' + properties.appKey + '/import';
+  const endpoint = apiVersionOneUrl + properties.appKey + apiResourceUrl;
   let formData = {
     'file': blob,
     'save_code': properties.saveCode
@@ -120,7 +120,7 @@ function csvSaveToDrive() {
   let csvFile = folder.createFile(blob);
 
   if(csvFile) {
-    Browser.msgBox('下記フォルダにCSVファイルを作成しました。\n\nhttps://drive.google.com/drive/u/2/folders/' + properties.folderId);
+    Browser.msgBox(csvSaveToDriveMsg + properties.folderId);
   }
 
   //----------------------------------------
